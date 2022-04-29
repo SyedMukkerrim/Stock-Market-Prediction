@@ -1,5 +1,4 @@
-from tensorflow import keras
-# import math
+import math
 from pickletools import optimize
 import pandas as pd
 import yfinance as yf
@@ -8,7 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from keras import Sequential
+
 
 
 msft = yf.Ticker("MSFT")
@@ -50,3 +49,33 @@ model.add(tf.keras.layers.LSTM(50, return_sequences=True, input_shape = (x_train
 model.add(tf.keras.layers.LSTM(50, return_sequences=False))
 model.add(tf.keras.layers.Dense(25))
 model.add(tf.keras.layers.Dense(1))
+
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+model.fit(x_train, y_train, batch_size = 1, epochs = 1)
+
+test_data = scaler_data[train_size -60:, :]
+
+x_test = []
+y_test = dataset[train_size:, :]
+for i in range(60, len(test_data)):
+    x_test.append(test_data[i-60:i, 0])
+
+
+x_test = np.array(x_test)
+x_test = np.reshape(x_test,(x_test.shape[0],x_test.shape[1],1))
+
+
+predictions = model.predict(x_test)
+predictions = scaler.inverse_transform(predictions)
+
+rmse = np.sqrt(np.mean( predictions - y_test)**2)
+
+plt.plot(predictions, color = 'r', label = 'predictions')
+plt.plot(y_test, color = 'b', label = 'y_test')
+
+plt.legend()
+plt.show()
+
+
+print(rmse)
