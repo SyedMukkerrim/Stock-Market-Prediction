@@ -12,12 +12,9 @@ from sklearn.preprocessing import MinMaxScaler
 
 msft = yf.Ticker("MSFT")
 df = msft.history(start ='2021-01-01')
-df.to_csv('msft.csv')
+df.to_csv('../CSV/msft.csv')
 
-df = pd.read_csv('msft.csv')
-
-#plt.plot(df['Date'] , df['Close'])
-#plt.show()
+df = pd.read_csv('../CSV/msft.csv')
 
 #data set for training
 data = df.filter(['Close'])
@@ -75,7 +72,27 @@ plt.plot(predictions, color = 'r', label = 'predictions')
 plt.plot(y_test, color = 'b', label = 'y_test')
 
 plt.legend()
-plt.show()
+plot = plt.show()
 
+plt.savefig("../plots/prediction_ytest.png")
 
 print(rmse)
+
+train = data[:train_size]
+valid = data[train_size:]
+valid['Predictions'] = predictions
+
+#Visualize
+plt.figure(figsize=(16,8))
+plt.title('Model')
+plt.xlabel('Date', fontsize = 18)
+plt.ylabel('Close Price USD ($)', fontsize = 18)
+plt.plot(train["Close"])
+plt.plot(valid[['Close', 'Predictions']])
+plt.legend(['Train', 'Val', 'Predicitons'], loc = 'lower right')
+plt.show()
+plt.savefig("../plots/visualize.png")
+
+print(valid)
+
+#Get the quote 
