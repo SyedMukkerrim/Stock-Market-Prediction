@@ -12,7 +12,7 @@ def ticker_data(ticker = 'MSFT' , start_time = '2021-01-01'):
    
     stock = yf.Ticker(ticker)
     df = stock.history(start = start_time)
-    df.to_csv('../CSV/{ticker}.csv')
+    df.to_csv('../csv/'+ticker+'.csv')
 
     data = df.filter(['Close'])
     dataset = data.to_numpy()
