@@ -1,3 +1,6 @@
+import datetime
+from pickle import FALSE, TRUE
+from sre_constants import JUMP
 import numpy as np
 import pandas as pd
 import yfinance as yf
@@ -12,7 +15,7 @@ def ticker_data(ticker = 'MSFT' , start_time = '2021-01-01'):
    
     stock = yf.Ticker(ticker)
     df = stock.history(start = start_time)
-    df.to_csv('../CSV/{ticker}.csv')
+    df.to_csv('../csv/'+ticker+'.csv')
 
     data = df.filter(['Close'])
     dataset = data.to_numpy()
@@ -20,7 +23,7 @@ def ticker_data(ticker = 'MSFT' , start_time = '2021-01-01'):
     return data , dataset
 
 def build_model(dataset, train_size, test_case_size):
-
+  
     scaler = MinMaxScaler(feature_range=(0,1))
     scaler_data = scaler.fit_transform(dataset)
 
@@ -83,3 +86,36 @@ def Visualize(data, predictions, train_size):
     plt.legend(['Train', 'Val', 'Predicitons'], loc = 'lower right')
     plt.show()
     plt.savefig("../plots/visualize.png")
+
+
+def validate(date_text):
+    try:
+        datetime.datetime.strptime(date_text, '%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
+def test_values(ticker, start_time, size, test_case_size):
+    check = FALSE
+
+    for i in ticker:
+        if i.isdigit():
+            print('Error bad ticker')
+            check = TRUE
+    
+    while(check):
+        ticker = input('Enter a new ticker: ')
+        for i in ticker:
+            if i.isdigit():
+                print('Error bad ticker')
+                check = FALSE
+        if(not check):
+            check = TRUE
+        else:
+            check = FALSE
+            
+    validate(start_time)
+
+
+
+
+    
